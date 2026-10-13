@@ -6,8 +6,10 @@
 <meta name="theme-color" content="#171717" />
 <meta name="description" content="A camera-based campus storytelling prototype by UST Inkblots." />
 <title>Inkblots — Campus Stories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#171717;--fg:#f4f1ea;--gold:#f2b705;--red:#c8102e;--mut:#b9b4a8;box-sizing:border-box}
+:root{--bg:#171717;--fg:#f4f1ea;--gold:#fdb515;--red:#c8102e;--mut:#b9b4a8;box-sizing:border-box}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%;background:var(--bg);color:var(--fg);font-family:Georgia,"Times New Roman",serif;overflow:hidden}
 #app{position:relative;height:100%;width:100%;overflow:hidden;background:radial-gradient(circle at 30% 20%,#2b2b2b,#111)}
@@ -32,16 +34,20 @@ button{font-family:system-ui,sans-serif;cursor:pointer;border:0;border-radius:99
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .pill{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:8px 14px;font-family:system-ui,sans-serif;font-size:12px;backdrop-filter:blur(8px);color:var(--fg)}
 button.pill{font-weight:600;cursor:pointer}
-.story-card,.dialog{background:rgba(23,23,23,.84);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:18px;backdrop-filter:blur(12px);max-width:520px;width:100%;align-self:center;margin-bottom:12px}
+.story-card{background:rgba(23,23,23,.84);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:18px;backdrop-filter:blur(12px);max-width:520px;width:100%;align-self:center;margin-bottom:12px}
 .story-card h2{font-size:26px;margin:6px 0}.story-card p:not(.eyebrow){font-size:15px;line-height:1.5;color:#e6e1d6}
-.dialog{border-color:rgba(242,183,5,.5);position:relative}
-.dialog .name{display:inline-block;background:var(--red);color:#fff;font-family:system-ui,sans-serif;font-weight:800;font-size:11px;letter-spacing:.14em;padding:4px 10px;border-radius:6px;margin-bottom:10px}
-.dialog .line{font-size:19px;line-height:1.45;min-height:84px}
-.dialog .tap{position:absolute;right:16px;bottom:10px;font-family:system-ui,sans-serif;font-size:11px;color:var(--gold);animation:bl 1s infinite}
-@keyframes bl{50%{opacity:.2}}
+
+/* Speech-bubble dialogue (Montserrat, gold bubble + tail) */
+.dialog{font-family:'Montserrat',system-ui,sans-serif;position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,calc(-100% - 20px));width:min(88vw,400px);background:var(--gold);color:#111;border-radius:26px;padding:16px 18px 20px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.dialog::after{content:"";position:absolute;left:var(--tx,50%);margin-left:-14px;bottom:-18px;width:0;height:0;border-left:4px solid transparent;border-right:28px solid transparent;border-top:20px solid var(--gold);transform:skewX(-8deg)}
+.dialog .name{display:inline-flex;align-items:center;gap:7px;background:#111;color:var(--gold);font-weight:800;font-size:11px;letter-spacing:.14em;padding:5px 12px 5px 8px;border-radius:999px;margin-bottom:10px}
+.dialog .name svg{width:14px;height:14px}
+.dialog .line{font-weight:600;font-size:16px;line-height:1.45;min-height:48px;color:#111}
+.dialog .tap{position:absolute;right:18px;bottom:8px;font-weight:700;font-size:10px;letter-spacing:.08em;color:#111;animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.25}}
 .choices{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-.choices button{background:rgba(255,255,255,.1);color:var(--fg);border:1px solid rgba(255,255,255,.3);text-align:left;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:600}
-.choices button:active{background:var(--gold);color:#171717}
+.choices button{font-family:'Montserrat',system-ui,sans-serif;background:#111;color:var(--gold);border:0;text-align:left;border-radius:14px;padding:12px 16px;font-size:14px;font-weight:700}
+.choices button:active{background:#fff;color:#111}
 .hidden{display:none!important}
 .notice{position:absolute;left:16px;right:16px;top:calc(56px + env(safe-area-inset-top,0px));z-index:6;background:var(--red);color:#fff;border-radius:12px;padding:12px 14px;font-family:system-ui,sans-serif;font-size:13px;line-height:1.4}
 </style>
@@ -63,10 +69,10 @@ button.pill{font-weight:600;cursor:pointer}
     <div class="row"><div class="pill" id="location-status">Checking campus location…</div><button class="pill" id="place">Place V here</button></div>
     <div>
       <div class="story-card" id="card"><p class="eyebrow">YOUR CAMPUS COMPANION</p><h2>Hey, Thomasian!</h2><p id="story-text">Move your phone around to find the V staffer standing in your space. Tap V, or the button below, to start talking.</p><button id="story-button" class="secondary">Discover a story</button></div>
-      <div class="dialog hidden" id="dialog"><span class="name">V STAFFER</span><p class="line" id="line"></p><div class="choices" id="choices"></div><span class="tap" id="tap">TAP TO CONTINUE ▸</span></div>
     </div>
     <button id="exit" class="exit">Exit camera</button>
   </section>
+  <div class="dialog hidden" id="dialog"><span class="name"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fdb515" d="M2 3h5l5 11 3-6h4l-7 16h-2z"/></svg>TOMAS U. SANTOS</span><p class="line" id="line"></p><div class="choices" id="choices"></div><span class="tap" id="tap">TAP TO CONTINUE ▸</span></div>
   <div class="notice hidden" id="notice" role="status"></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -78,7 +84,7 @@ button.pill{font-weight:600;cursor:pointer}
 
   // SAMPLE SCRIPT: replace the text with real Inkblots stories. Each node: t = lines, c = [label, nextNode], end = finish.
   var script={
-    start:{t:["Psst! Over here. Yes, you, Thomasian.","I'm V. I've been standing here waiting for someone curious enough to look up from their phone."],c:[["Where's the story?","where"],["Who are you?","who"]]},
+    start:{t:["Psst! Over here. Yes, you, Thomasian.","I'm Tomas U. Santos, but around here everyone calls me V. I've been waiting for someone curious enough to look up from their phone."],c:[["Where's the story?","where"],["Who are you?","who"]]},
     who:{t:["Think of me as what's left when a newsroom's late nights turn into a mascot.","I carry the questions nobody had time to finish asking."],c:[["Okay, show me a story","where"]]},
     where:{t:["Stories hide in plain sight. Look around slowly and pick one spot near you: a bench, a wall, a doorway.","Got one? Good. Now think: who passes through here every day, and who never notices?"],c:[["Someone always does","a"],["I'll go ask around","b"]]},
     a:{t:["Then that's your lead. Start with three questions: who, since when, and what changed.","Real Inkblots stories will unlock right here soon. Come find me again!"],end:1},
@@ -93,22 +99,106 @@ button.pill{font-weight:600;cursor:pointer}
   root.appendChild(renderer.domElement);
   var scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(62,1,.1,50);
   cam.position.set(0,0,0);
-  scene.add(new THREE.HemisphereLight(0xffffff,0x555555,1.0));
-  var dl=new THREE.DirectionalLight(0xffffff,.9);dl.position.set(2,4,3);scene.add(dl);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x6a6a7a,.55));
+  var dl=new THREE.DirectionalLight(0xffffff,.55);dl.position.set(2,4,3);scene.add(dl);var rl=new THREE.DirectionalLight(0xffe2b0,.3);rl.position.set(-3,2,-3);scene.add(rl);
 
-  var M=function(c){return new THREE.MeshStandardMaterial({color:c,roughness:.6})};
+
+  // ---------- V, anime-style: cel shading + ink outlines ----------
+  var M=function(c){return new THREE.MeshStandardMaterial({color:c,roughness:.5,emissive:c,emissiveIntensity:.4})};
+  var gm=new THREE.DataTexture(new Uint8Array([70,150,255]),3,1,THREE.LuminanceFormat);gm.minFilter=gm.magFilter=THREE.NearestFilter;gm.generateMipmaps=false;gm.needsUpdate=true;
+  var T=function(c){return new THREE.MeshToonMaterial({color:c,gradientMap:gm})};
+  var OUT=new THREE.MeshBasicMaterial({color:0x14101a,side:THREE.BackSide});
+  var SKIN=0xf3cba6,HAIR=0x232a52,UP=new THREE.Vector3(0,1,0);
   var guide=new THREE.Group(),rig=new THREE.Group();guide.add(rig);
-  var body=new THREE.Mesh(new THREE.CylinderGeometry(.5,.62,1.2,24),M(0x171717));body.position.y=.7;rig.add(body);
-  var head=new THREE.Mesh(new THREE.SphereGeometry(.42,28,24),M(0xf1c9a5));head.position.y=1.65;rig.add(head);
-  var hair=new THREE.Mesh(new THREE.SphereGeometry(.44,28,24,0,Math.PI*2,0,Math.PI/2),M(0x1a1209));hair.position.y=1.7;rig.add(hair);
-  [-.15,.15].forEach(function(x){var e=new THREE.Mesh(new THREE.SphereGeometry(.05,12,12),M(0x111111));e.position.set(x,1.68,.37);rig.add(e)});
-  var smile=new THREE.Mesh(new THREE.TorusGeometry(.12,.02,8,16,Math.PI),M(0x7a2d2d));smile.position.set(0,1.54,.39);smile.rotation.z=Math.PI;rig.add(smile);
-  var vs=new THREE.Shape();vs.moveTo(-.28,.3);vs.lineTo(-.14,.3);vs.lineTo(0,-.08);vs.lineTo(.14,.3);vs.lineTo(.28,.3);vs.lineTo(.07,-.3);vs.lineTo(-.07,-.3);vs.closePath();
-  var vm=new THREE.Mesh(new THREE.ExtrudeGeometry(vs,{depth:.04,bevelEnabled:false}),M(0xc8102e));vm.position.set(0,.85,.57);vm.scale.set(.9,.9,1);rig.add(vm);
-  function arm(side){var g=new THREE.Group(),m=new THREE.Mesh(new THREE.CylinderGeometry(.11,.11,.8,14),M(0x171717));m.position.y=-.35;g.add(m);
-    var h=new THREE.Mesh(new THREE.SphereGeometry(.13,14,14),M(0xf1c9a5));h.position.y=-.78;g.add(h);g.position.set(side*.62,1.15,0);return g}
-  var armL=arm(-1),armR=arm(1);armL.rotation.z=.15;rig.add(armL,armR);
-  var ring=new THREE.Mesh(new THREE.RingGeometry(.9,1,48),new THREE.MeshBasicMaterial({color:0xf2b705,side:THREE.DoubleSide,transparent:true,opacity:.85}));
+  var sk=function(){return T(SKIN)},cl=function(c){return T(c)};
+  var SPH=function(r){return new THREE.SphereGeometry(r,32,24)};
+  function outline(o,k){var s=new THREE.Mesh(o.geometry,OUT);s.scale.setScalar(k||1.05);o.add(s);return o}
+  function mesh(g,m,x,y,z,sx,sy,sz,ol){var o=new THREE.Mesh(g,m);o.position.set(x,y,z);if(sx)o.scale.set(sx,sy,sz);if(ol)outline(o,ol);rig.add(o);return o}
+  // legs, shoes
+  [-1,1].forEach(function(s){mesh(new THREE.CylinderGeometry(.1,.085,.8,18),cl(0x2b2f3d),s*.14,.42,0,0,0,0,1.07);mesh(new THREE.BoxGeometry(.15,.08,.3),cl(0xf2f2f2),s*.14,.04,.05,0,0,0,1.12)});
+  // torso (black polo), shoulders, collar, neck
+  var body=mesh(new THREE.CylinderGeometry(.4,.32,.85,28),cl(0x1b1b1f),0,1.14,0,1,1,.6,1.04);
+  mesh(SPH(.4),cl(0x1b1b1f),0,1.52,0,1,.3,.6,1.04);
+  var col=mesh(new THREE.TorusGeometry(.1,.03,8,24),cl(0x1b1b1f),0,1.63,0);col.rotation.x=Math.PI/2;
+  mesh(new THREE.CylinderGeometry(.075,.085,.26,16),sk(),0,1.7,0,0,0,0,1.1);
+
+  // head (group so it can nod while talking); a touch oversized, anime proportions
+  var head=new THREE.Group();head.position.set(0,1.97,0);head.scale.setScalar(1.15);rig.add(head);
+  function hp(g,m,x,y,z,sx,sy,sz,ol){var o=new THREE.Mesh(g,m);o.position.set(x,y,z);if(sx)o.scale.set(sx,sy,sz);if(ol)outline(o,ol);head.add(o);return o}
+  var AX=.2304,AY=.2544,AZ=.2256;                                     // face ellipsoid radii
+  function fz(x,y){return AZ*Math.sqrt(Math.max(.02,1-(x/AX)*(x/AX)-(y/AY)*(y/AY)))}
+  var hairM=cl(HAIR);
+  hp(SPH(.24),sk(),0,0,0,.96,1.06,.94,1.045);                         // face
+  hp(SPH(.1),sk(),0,-.165,.055,.8,1,.8,1.08);                         // narrow chin
+  hp(SPH(.011),T(0xe0a583),0,-.062,fz(0,-.062)+.004,1,1.5,1);         // tiny nose
+  // ears
+  [-1,1].forEach(function(s){hp(SPH(.04),sk(),s*.225,-.015,-.01,.5,1,.8,1.1)});
+
+  // ----- big glossy anime eyes -----
+  var eyeW=new THREE.MeshBasicMaterial({color:0xffffff}),
+      irisO=new THREE.MeshBasicMaterial({color:0x1d5fb8}),
+      irisI=new THREE.MeshBasicMaterial({color:0x4fb4ff}),
+      pup=new THREE.MeshBasicMaterial({color:0x0a0a18}),
+      lid=new THREE.MeshBasicMaterial({color:0x14101a}),
+      shine=new THREE.MeshBasicMaterial({color:0xffffff});
+  [-1,1].forEach(function(s){
+    var ex=s*.098,ey=-.006,e=new THREE.Group();
+    e.position.set(ex,ey,fz(ex,ey)-.004);e.rotation.y=s*Math.asin(Math.min(.9,Math.abs(ex)/AX));
+    function ep(g,m,x,y,z,sx,sy,sz){var o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.scale.set(sx,sy,sz);e.add(o);return o}
+    ep(SPH(.06),lid,0,.006,.004,1,1.3,.3);                            // dark lash line / outline (thicker on top)
+    ep(SPH(.05),eyeW,0,-.002,.011,1,1.26,.3);                          // sclera
+    ep(SPH(.04),irisO,0,-.005,.019,1,1.22,.3);                         // iris rim
+    ep(SPH(.029),irisI,0,-.013,.0235,1,1.15,.3);                       // lighter lower iris glow
+    ep(SPH(.0185),pup,0,-.006,.0275,1,1.25,.3);                        // pupil
+    ep(SPH(.0125),shine,-s*.013,.02,.036,1,1,.5);                      // big highlight
+    ep(SPH(.0058),shine,s*.012,-.022,.036,1,1,.5);                     // small highlight
+    var b=new THREE.Mesh(new THREE.BoxGeometry(.075,.012,.012),hairM);b.position.set(0,.108,.012);b.rotation.z=s*.2;e.add(b);   // brow
+    head.add(e);
+  });
+  // mouth: small confident smile (animated while talking)
+  var smile=hp(new THREE.TorusGeometry(.036,.0065,8,16,Math.PI),new THREE.MeshBasicMaterial({color:0x6b2a31}),0,-.1,fz(0,-.1)+.004);smile.rotation.z=Math.PI;
+
+  // ----- spiky anime hair -----
+  var cap=hp(new THREE.SphereGeometry(.262,32,24,0,Math.PI*2,0,Math.PI*.52),hairM,0,.02,-.015,.93,1.1,1,1.035);cap.rotation.x=-.35;
+  function spike(x,y,z,dx,dy,dz,len,w){
+    var g=new THREE.ConeGeometry(w,len,12);g.translate(0,len/2,0);
+    var m=new THREE.Mesh(g,hairM);m.position.set(x,y,z);m.quaternion.setFromUnitVectors(UP,new THREE.Vector3(dx,dy,dz).normalize());
+    var o=new THREE.Mesh(g,OUT);o.scale.set(1.3,1.08,1.3);m.add(o);head.add(m);return m}
+  function front(x,y,dx,dy,dz,len,w){spike(x,y,fz(x,y)+.03,dx,dy,dz,len,w)}
+  // fringe / bangs
+  front(-.03,.125,-.2,-1,.3,.09,.05);  front(.04,.125,.15,-1,.3,.075,.045);
+  front(-.1,.125,-.55,-1,.25,.09,.05); front(.1,.125,.5,-1,.25,.1,.05);
+  front(-.17,.11,-.7,-1,.15,.1,.045);  front(.17,.11,.7,-1,.15,.1,.045);
+  // sideburn locks over the temples
+  front(-.19,.09,-.3,-1,.1,.17,.045);  front(.19,.09,.3,-1,.1,.17,.045);
+  // top spikes
+  spike(0,.25,.02,.1,1,.25,.17,.075);   spike(-.1,.235,.02,-.55,1,.2,.15,.07);  spike(.11,.235,.03,.55,1,.3,.14,.07);
+  spike(-.05,.245,-.1,-.25,1,-.3,.14,.07); spike(.07,.245,-.1,.35,1,-.4,.15,.07);
+  // back spikes
+  spike(0,.12,-.2,0,.4,-1,.17,.08);  spike(-.12,.06,-.18,-.6,-.1,-1,.15,.07);  spike(.12,.06,-.18,.6,-.1,-1,.15,.07);  spike(0,-.04,-.2,0,-.5,-1,.13,.065);
+
+
+  // Gold "V" logo with curl flourish (traced from the Inkblots V mark, 554px artwork space)
+  var S=.0011,GOLD=0xfdb515,GOLD2=0xfcc24a,DARK=0xc08a0c;
+  function pt(p){return new THREE.Vector2((p[0]-285)*S,-(p[1]-285)*S)}
+  function poly(pts,depth,col,z){var s=new THREE.Shape(pts.map(pt));var m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:depth,bevelEnabled:false}),M(col));m.position.z=z;return m}
+  var logo=new THREE.Group();
+  logo.add(poly([[350,187],[408,187],[315,398],[279,320]],.05,GOLD2,0));        // right stroke
+  logo.add(poly([[279,320],[315,398],[302,338]],.056,DARK,0));                   // shaded overlap
+  logo.add(poly([[120,139],[195,139],[315,398],[280,471]],.05,GOLD,.012));       // left stroke
+  var curvePts=[[308,172],[328,153],[362,149],[404,160],[440,153],[453,126],[436,100],[411,98],[400,114],[414,128],[425,118]].map(function(p){var v=pt(p);return new THREE.Vector3(v.x,v.y,.025)});
+  var curl=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(curvePts),48,.006,8,false),M(GOLD));logo.add(curl);
+  logo.position.set(0,1.2,.2);rig.add(logo);
+
+  function arm(side){var g=new THREE.Group();
+    function ap(m,y,sx,sy,sz,ol){m.position.y=y;if(sx)m.scale.set(sx,sy,sz);if(ol)outline(m,ol);g.add(m);return m}
+    ap(new THREE.Mesh(SPH(.085),cl(0x1b1b1f)),0,0,0,0,1.06);
+    ap(new THREE.Mesh(new THREE.CylinderGeometry(.075,.07,.3,16),cl(0x1b1b1f)),-.15,0,0,0,1.07);
+    ap(new THREE.Mesh(new THREE.CylinderGeometry(.06,.05,.3,16),sk()),-.43,0,0,0,1.1);
+    ap(new THREE.Mesh(SPH(.055),sk()),-.62,.8,1.2,.55,1.12);
+    g.position.set(side*.42,1.52,0);return g}
+  var armL=arm(-1),armR=arm(1);armL.rotation.z=-.1;rig.add(armL,armR);
+  var ring=new THREE.Mesh(new THREE.RingGeometry(.9,1,48),new THREE.MeshBasicMaterial({color:0xfdb515,side:THREE.DoubleSide,transparent:true,opacity:.85}));
   ring.rotation.x=-Math.PI/2;ring.position.y=.02;guide.add(ring);
   // soft shadow blob so V feels grounded
   var sh=new THREE.Mesh(new THREE.CircleGeometry(.85,32),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.3}));
@@ -143,18 +233,24 @@ button.pill{font-weight:600;cursor:pointer}
     ray.setFromCamera(mv,cam);if(ray.intersectObject(rig,true).length)startTalk();
   });
 
+  var dv=new THREE.Vector3();
+  function posDialog(){if(!talking)return;var w=root.clientWidth||innerWidth,h=root.clientHeight||innerHeight,dg=$('dialog'),bw=dg.offsetWidth,bh=dg.offsetHeight;
+    guide.updateMatrixWorld();dv.set(0,2.75,0);guide.localToWorld(dv);dv.project(cam);
+    var x=(dv.x*.5+.5)*w,y=(-dv.y*.5+.5)*h;if(dv.z>1){x=w/2;y=h*.5}
+    var lx=Math.max(bw/2+10,Math.min(w-bw/2-10,x));y=Math.max(bh+64,Math.min(h-24,y));
+    dg.style.left=lx+'px';dg.style.top=y+'px';dg.style.setProperty('--tx',Math.max(28,Math.min(bw-28,x-lx+bw/2))+'px')}
   var t0=performance.now();
   (function loop(){requestAnimationFrame(loop);if(!running)return;
     var t=(performance.now()-t0)/1000;
     updateCam();
     // V always turns to face you
     guide.rotation.y=Math.atan2(-guide.position.x,-guide.position.z);
-    armR.rotation.z=talking?-.5+Math.sin(t*3)*.15:-2.4+Math.sin(t*6)*.35;
+    armR.rotation.z=talking?.25+Math.sin(t*3)*.08:2.5+Math.sin(t*6)*.3;
     rig.position.y=Math.sin(t*2)*.04;
     head.rotation.x=typing?Math.sin(t*14)*.06:0;
     smile.scale.y=typing?.6+Math.abs(Math.sin(t*12))*.9:1;
     ring.rotation.z=t;
-    renderer.render(scene,cam)})();
+    renderer.render(scene,cam);posDialog()})();
 
   // ---------- Dialogue ----------
   var node=null,li=0,typing=false,full='',ti=0,tmr=null;
