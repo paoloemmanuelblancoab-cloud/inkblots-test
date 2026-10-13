@@ -108,7 +108,7 @@ button.pill{font-weight:600;cursor:pointer}
   var gm=new THREE.DataTexture(new Uint8Array([70,150,255]),3,1,THREE.LuminanceFormat);gm.minFilter=gm.magFilter=THREE.NearestFilter;gm.generateMipmaps=false;gm.needsUpdate=true;
   var T=function(c){return new THREE.MeshToonMaterial({color:c,gradientMap:gm})};
   var OUT=new THREE.MeshBasicMaterial({color:0x14101a,side:THREE.BackSide});
-  var SKIN=0xf3cba6,HAIR=0x232a52,UP=new THREE.Vector3(0,1,0);
+  var SKIN=0xf3cba6,HAIR=0x4a2c18,UP=new THREE.Vector3(0,1,0);
   var guide=new THREE.Group(),rig=new THREE.Group();guide.add(rig);
   var sk=function(){return T(SKIN)},cl=function(c){return T(c)};
   var SPH=function(r){return new THREE.SphereGeometry(r,32,24)};
@@ -136,8 +136,8 @@ button.pill{font-weight:600;cursor:pointer}
 
   // ----- big glossy anime eyes -----
   var eyeW=new THREE.MeshBasicMaterial({color:0xffffff}),
-      irisO=new THREE.MeshBasicMaterial({color:0x1d5fb8}),
-      irisI=new THREE.MeshBasicMaterial({color:0x4fb4ff}),
+      irisO=new THREE.MeshBasicMaterial({color:0x5a3017}),
+      irisI=new THREE.MeshBasicMaterial({color:0xb9772f}),
       pup=new THREE.MeshBasicMaterial({color:0x0a0a18}),
       lid=new THREE.MeshBasicMaterial({color:0x14101a}),
       shine=new THREE.MeshBasicMaterial({color:0xffffff});
