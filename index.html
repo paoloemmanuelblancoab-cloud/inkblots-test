@@ -8,18 +8,17 @@
 <title>Inkblots — Campus Stories</title>
 <style>
 :root{--bg:#171717;--fg:#f4f1ea;--gold:#f2b705;--red:#c8102e;--mut:#b9b4a8;box-sizing:border-box}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171717;--fg:#f4f1ea}}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%;background:var(--bg);color:var(--fg);font-family:Georgia,"Times New Roman",serif;overflow:hidden}
 #app{position:relative;height:100%;width:100%;overflow:hidden;background:radial-gradient(circle at 30% 20%,#2b2b2b,#111)}
 #camera{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #three-root{position:absolute;inset:0;touch-action:none}
 #three-root canvas{display:block;width:100%;height:100%}
-.shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.1) 35%,rgba(0,0,0,.75))}
-.topbar{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 10px;z-index:5;font-family:system-ui,sans-serif;font-size:11px;letter-spacing:.12em}
+.shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,0) 28%,rgba(0,0,0,0) 60%,rgba(0,0,0,.6))}
+.topbar{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 10px;z-index:5;font-family:system-ui,sans-serif;font-size:11px;letter-spacing:.12em;pointer-events:none}
 .brand{color:var(--fg);text-decoration:none;font-weight:800;font-size:14px}.brand span{color:var(--gold)}
 .edition{color:var(--mut);text-align:right}
-.intro{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:flex-end;gap:16px;padding:24px 22px calc(28px + env(safe-area-inset-bottom,0px));max-width:620px}
+.intro{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:flex-end;gap:16px;padding:24px 22px calc(28px + env(safe-area-inset-bottom,0px));max-width:620px;background:linear-gradient(0deg,rgba(0,0,0,.8),rgba(0,0,0,.2))}
 .eyebrow{font-family:system-ui,sans-serif;font-size:11px;letter-spacing:.18em;color:var(--gold);font-weight:700}
 h1{font-size:clamp(40px,12vw,72px);line-height:1;font-weight:700}h1 em{color:var(--gold)}
 .dek{font-size:17px;line-height:1.5;color:#e6e1d6}
@@ -30,9 +29,19 @@ button{font-family:system-ui,sans-serif;cursor:pointer;border:0;border-radius:99
 .privacy{font-family:system-ui,sans-serif;font-size:12px;color:var(--mut);line-height:1.5}
 .hud{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:space-between;align-items:stretch;padding:calc(58px + env(safe-area-inset-top,0px)) 16px calc(18px + env(safe-area-inset-bottom,0px));pointer-events:none}
 .hud>*{pointer-events:auto}
-.pill{align-self:flex-start;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:8px 14px;font-family:system-ui,sans-serif;font-size:12px;backdrop-filter:blur(8px)}
-.story-card{background:rgba(23,23,23,.82);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:18px;backdrop-filter:blur(12px);max-width:520px;width:100%;align-self:center;margin-bottom:12px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:8px 14px;font-family:system-ui,sans-serif;font-size:12px;backdrop-filter:blur(8px);color:var(--fg)}
+button.pill{font-weight:600;cursor:pointer}
+.story-card,.dialog{background:rgba(23,23,23,.84);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:18px;backdrop-filter:blur(12px);max-width:520px;width:100%;align-self:center;margin-bottom:12px}
 .story-card h2{font-size:26px;margin:6px 0}.story-card p:not(.eyebrow){font-size:15px;line-height:1.5;color:#e6e1d6}
+.dialog{border-color:rgba(242,183,5,.5);position:relative}
+.dialog .name{display:inline-block;background:var(--red);color:#fff;font-family:system-ui,sans-serif;font-weight:800;font-size:11px;letter-spacing:.14em;padding:4px 10px;border-radius:6px;margin-bottom:10px}
+.dialog .line{font-size:19px;line-height:1.45;min-height:84px}
+.dialog .tap{position:absolute;right:16px;bottom:10px;font-family:system-ui,sans-serif;font-size:11px;color:var(--gold);animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.2}}
+.choices{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.choices button{background:rgba(255,255,255,.1);color:var(--fg);border:1px solid rgba(255,255,255,.3);text-align:left;border-radius:12px;padding:12px 14px;font-size:15px;font-weight:600}
+.choices button:active{background:var(--gold);color:#171717}
 .hidden{display:none!important}
 .notice{position:absolute;left:16px;right:16px;top:calc(56px + env(safe-area-inset-top,0px));z-index:6;background:var(--red);color:#fff;border-radius:12px;padding:12px 14px;font-family:system-ui,sans-serif;font-size:13px;line-height:1.4}
 </style>
@@ -51,8 +60,11 @@ button{font-family:system-ui,sans-serif;cursor:pointer;border:0;border-radius:99
     <p class="privacy">Your camera is used on this device for the visual experience. This prototype does not upload or record camera footage.</p>
   </main>
   <section class="hud hidden" id="hud" aria-live="polite">
-    <div class="pill" id="location-status">Checking campus location…</div>
-    <div class="story-card"><p class="eyebrow">YOUR CAMPUS COMPANION</p><h2>Hey, Thomasian!</h2><p id="story-text">I'm a 3D V staffer, here to guide you to stories hiding in plain sight.</p><button id="story-button" class="secondary">Discover a story</button></div>
+    <div class="row"><div class="pill" id="location-status">Checking campus location…</div><button class="pill" id="place">Place V here</button></div>
+    <div>
+      <div class="story-card" id="card"><p class="eyebrow">YOUR CAMPUS COMPANION</p><h2>Hey, Thomasian!</h2><p id="story-text">Move your phone around to find the V staffer standing in your space. Tap V, or the button below, to start talking.</p><button id="story-button" class="secondary">Discover a story</button></div>
+      <div class="dialog hidden" id="dialog"><span class="name">V STAFFER</span><p class="line" id="line"></p><div class="choices" id="choices"></div><span class="tap" id="tap">TAP TO CONTINUE ▸</span></div>
+    </div>
     <button id="exit" class="exit">Exit camera</button>
   </section>
   <div class="notice hidden" id="notice" role="status"></div>
@@ -61,96 +73,138 @@ button{font-family:system-ui,sans-serif;cursor:pointer;border:0;border-radius:99
 <script>
 (function(){
   var $=function(i){return document.getElementById(i)};
-  var video=$('camera'),root=$('three-root'),notice=$('notice'),stream=null,running=false;
-  // Sample prompts only. Replace with real Inkblots stories.
-  var stories=[
-    "Story 1 (sample): Every campus corner has someone who has been here longer than the paint. Ask them what it looked like before.",
-    "Story 2 (sample): Look up. The oldest buildings keep their own records in stone, glass and weather stains.",
-    "Story 3 (sample): The best lead is usually the one you walk past daily. Pick one place and ask three questions."
-  ],si=0;
+  var video=$('camera'),root=$('three-root'),notice=$('notice'),stream=null,running=false,talking=false;
   var UST={lat:14.6097,lng:120.9890,radius:700};
+
+  // SAMPLE SCRIPT: replace the text with real Inkblots stories. Each node: t = lines, c = [label, nextNode], end = finish.
+  var script={
+    start:{t:["Psst! Over here. Yes, you, Thomasian.","I'm V. I've been standing here waiting for someone curious enough to look up from their phone."],c:[["Where's the story?","where"],["Who are you?","who"]]},
+    who:{t:["Think of me as what's left when a newsroom's late nights turn into a mascot.","I carry the questions nobody had time to finish asking."],c:[["Okay, show me a story","where"]]},
+    where:{t:["Stories hide in plain sight. Look around slowly and pick one spot near you: a bench, a wall, a doorway.","Got one? Good. Now think: who passes through here every day, and who never notices?"],c:[["Someone always does","a"],["I'll go ask around","b"]]},
+    a:{t:["Then that's your lead. Start with three questions: who, since when, and what changed.","Real Inkblots stories will unlock right here soon. Come find me again!"],end:1},
+    b:{t:["Good instinct. The best stories begin with a conversation, not a press release.","Real Inkblots stories will unlock right here soon. Come find me again!"],end:1}
+  };
 
   function say(msg,ms){notice.textContent=msg;notice.classList.remove('hidden');clearTimeout(say.t);say.t=setTimeout(function(){notice.classList.add('hidden')},ms||5000)}
 
-  // ---------- Three.js scene ----------
+  // ---------- Three.js ----------
   var renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
   root.appendChild(renderer.domElement);
-  var scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(45,1,.1,50);
-  cam.position.set(0,1.1,5.2);cam.lookAt(0,1,0);
-  scene.add(new THREE.HemisphereLight(0xffffff,0x444444,1.0));
+  var scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(62,1,.1,50);
+  cam.position.set(0,0,0);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x555555,1.0));
   var dl=new THREE.DirectionalLight(0xffffff,.9);dl.position.set(2,4,3);scene.add(dl);
 
   var M=function(c){return new THREE.MeshStandardMaterial({color:c,roughness:.6})};
-  var guide=new THREE.Group();
-  var body=new THREE.Mesh(new THREE.CylinderGeometry(.5,.62,1.2,24),M(0x171717));body.position.y=.7;guide.add(body);
-  var head=new THREE.Mesh(new THREE.SphereGeometry(.42,28,24),M(0xf1c9a5));head.position.y=1.65;guide.add(head);
-  var hair=new THREE.Mesh(new THREE.SphereGeometry(.44,28,24,0,Math.PI*2,0,Math.PI/2),M(0x1a1209));hair.position.y=1.7;guide.add(hair);
-  [-.15,.15].forEach(function(x){var e=new THREE.Mesh(new THREE.SphereGeometry(.05,12,12),M(0x111111));e.position.set(x,1.68,.37);guide.add(e)});
-  var smile=new THREE.Mesh(new THREE.TorusGeometry(.12,.02,8,16,Math.PI),M(0x7a2d2d));smile.position.set(0,1.54,.39);smile.rotation.z=Math.PI;guide.add(smile);
-  // red V badge on chest
+  var guide=new THREE.Group(),rig=new THREE.Group();guide.add(rig);
+  var body=new THREE.Mesh(new THREE.CylinderGeometry(.5,.62,1.2,24),M(0x171717));body.position.y=.7;rig.add(body);
+  var head=new THREE.Mesh(new THREE.SphereGeometry(.42,28,24),M(0xf1c9a5));head.position.y=1.65;rig.add(head);
+  var hair=new THREE.Mesh(new THREE.SphereGeometry(.44,28,24,0,Math.PI*2,0,Math.PI/2),M(0x1a1209));hair.position.y=1.7;rig.add(hair);
+  [-.15,.15].forEach(function(x){var e=new THREE.Mesh(new THREE.SphereGeometry(.05,12,12),M(0x111111));e.position.set(x,1.68,.37);rig.add(e)});
+  var smile=new THREE.Mesh(new THREE.TorusGeometry(.12,.02,8,16,Math.PI),M(0x7a2d2d));smile.position.set(0,1.54,.39);smile.rotation.z=Math.PI;rig.add(smile);
   var vs=new THREE.Shape();vs.moveTo(-.28,.3);vs.lineTo(-.14,.3);vs.lineTo(0,-.08);vs.lineTo(.14,.3);vs.lineTo(.28,.3);vs.lineTo(.07,-.3);vs.lineTo(-.07,-.3);vs.closePath();
-  var vm=new THREE.Mesh(new THREE.ExtrudeGeometry(vs,{depth:.04,bevelEnabled:false}),M(0xc8102e));vm.position.set(0,.85,.57);vm.scale.set(.9,.9,1);guide.add(vm);
-  // arms: left rests, right waves
+  var vm=new THREE.Mesh(new THREE.ExtrudeGeometry(vs,{depth:.04,bevelEnabled:false}),M(0xc8102e));vm.position.set(0,.85,.57);vm.scale.set(.9,.9,1);rig.add(vm);
   function arm(side){var g=new THREE.Group(),m=new THREE.Mesh(new THREE.CylinderGeometry(.11,.11,.8,14),M(0x171717));m.position.y=-.35;g.add(m);
     var h=new THREE.Mesh(new THREE.SphereGeometry(.13,14,14),M(0xf1c9a5));h.position.y=-.78;g.add(h);g.position.set(side*.62,1.15,0);return g}
-  var armL=arm(-1),armR=arm(1);armL.rotation.z=.15;guide.add(armL,armR);
-  // ground ring
-  var ring=new THREE.Mesh(new THREE.RingGeometry(.9,1,48),new THREE.MeshBasicMaterial({color:0xf2b705,side:THREE.DoubleSide,transparent:true,opacity:.8}));
+  var armL=arm(-1),armR=arm(1);armL.rotation.z=.15;rig.add(armL,armR);
+  var ring=new THREE.Mesh(new THREE.RingGeometry(.9,1,48),new THREE.MeshBasicMaterial({color:0xf2b705,side:THREE.DoubleSide,transparent:true,opacity:.85}));
   ring.rotation.x=-Math.PI/2;ring.position.y=.02;guide.add(ring);
-  guide.position.y=-.2;scene.add(guide);
+  // soft shadow blob so V feels grounded
+  var sh=new THREE.Mesh(new THREE.CircleGeometry(.85,32),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.3}));
+  sh.rotation.x=-Math.PI/2;sh.position.y=.01;guide.add(sh);
+  guide.scale.setScalar(.85);scene.add(guide);
 
-  function resize(){var w=root.clientWidth||innerWidth,h=root.clientHeight||innerHeight;renderer.setSize(w,h);cam.aspect=w/h;cam.position.z=w/h<.8?6.4:5.2;cam.updateProjectionMatrix()}
+  // ---------- AR anchoring ----------
+  var ori={a:0,b:0,g:0,has:false},look={yaw:0,pitch:0},eu=new THREE.Euler(),q1=new THREE.Quaternion(-Math.SQRT1_2,0,0,Math.SQRT1_2),q0=new THREE.Quaternion(),zee=new THREE.Vector3(0,0,1),fwd=new THREE.Vector3();
+  var R=Math.PI/180;
+  addEventListener('deviceorientation',function(e){if(e.alpha==null||e.beta==null)return;ori.a=e.alpha;ori.b=e.beta;ori.g=e.gamma;ori.has=true});
+  function screenAngle(){return (screen.orientation&&screen.orientation.angle!=null?screen.orientation.angle:(window.orientation||0))*R}
+  function updateCam(){
+    if(ori.has){eu.set(ori.b*R,ori.a*R,-ori.g*R,'YXZ');cam.quaternion.setFromEuler(eu);cam.quaternion.multiply(q1);cam.quaternion.multiply(q0.setFromAxisAngle(zee,-screenAngle()))}
+    else{eu.set(look.pitch,look.yaw,0,'YXZ');cam.quaternion.setFromEuler(eu)}
+  }
+  function place(){
+    fwd.set(0,0,-1).applyQuaternion(cam.quaternion);fwd.y=0;
+    if(fwd.length()<.1)fwd.set(0,0,-1);fwd.normalize();
+    guide.position.set(fwd.x*3.4,-1.45,fwd.z*3.4);
+  }
+  function resize(){var w=root.clientWidth||innerWidth,h=root.clientHeight||innerHeight;renderer.setSize(w,h);cam.aspect=w/h;cam.fov=w/h<1?70:55;cam.updateProjectionMatrix()}
   addEventListener('resize',resize);resize();
 
-  // drag to rotate
-  var drag=false,lx=0,spin=0;
-  root.addEventListener('pointerdown',function(e){drag=true;lx=e.clientX});
-  addEventListener('pointerup',function(){drag=false});
-  addEventListener('pointermove',function(e){if(drag){spin+=(e.clientX-lx)*.01;lx=e.clientX}});
+  // drag looks around when no gyro; tap on V starts the dialogue
+  var down=null,ray=new THREE.Raycaster(),mv=new THREE.Vector2();
+  root.addEventListener('pointerdown',function(e){down={x:e.clientX,y:e.clientY,lx:e.clientX,ly:e.clientY}});
+  addEventListener('pointermove',function(e){if(down&&!ori.has){look.yaw+=(e.clientX-down.lx)*.005;look.pitch=Math.max(-1.2,Math.min(1.2,look.pitch+(e.clientY-down.ly)*.005));down.lx=e.clientX;down.ly=e.clientY}});
+  addEventListener('pointerup',function(e){
+    if(!down)return;var moved=Math.hypot(e.clientX-down.x,e.clientY-down.y);down=null;
+    if(moved>8||!running||talking)return;
+    var r=root.getBoundingClientRect();mv.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
+    ray.setFromCamera(mv,cam);if(ray.intersectObject(rig,true).length)startTalk();
+  });
 
   var t0=performance.now();
   (function loop(){requestAnimationFrame(loop);if(!running)return;
     var t=(performance.now()-t0)/1000;
-    armR.rotation.z=-2.4+Math.sin(t*6)*.35;
-    guide.position.y=-.2+Math.sin(t*2)*.04;
-    guide.rotation.y=spin+Math.sin(t*.8)*.25;
+    updateCam();
+    // V always turns to face you
+    guide.rotation.y=Math.atan2(-guide.position.x,-guide.position.z);
+    armR.rotation.z=talking?-.5+Math.sin(t*3)*.15:-2.4+Math.sin(t*6)*.35;
+    rig.position.y=Math.sin(t*2)*.04;
+    head.rotation.x=typing?Math.sin(t*14)*.06:0;
+    smile.scale.y=typing?.6+Math.abs(Math.sin(t*12))*.9:1;
     ring.rotation.z=t;
     renderer.render(scene,cam)})();
 
-  // ---------- Camera ----------
+  // ---------- Dialogue ----------
+  var node=null,li=0,typing=false,full='',ti=0,tmr=null;
+  function typeLine(s){full=s;ti=0;typing=true;$('line').textContent='';$('tap').classList.add('hidden');$('choices').innerHTML='';
+    clearInterval(tmr);tmr=setInterval(function(){ti++;$('line').textContent=full.slice(0,ti);if(ti>=full.length)finishType()},24)}
+  function finishType(){clearInterval(tmr);typing=false;$('line').textContent=full;
+    var last=li>=node.t.length-1;
+    if(!last){$('tap').classList.remove('hidden');return}
+    var box=$('choices');box.innerHTML='';
+    if(node.c)node.c.forEach(function(c){var b=document.createElement('button');b.textContent=c[0];b.onclick=function(ev){ev.stopPropagation();go(c[1])};box.appendChild(b)});
+    else{var b=document.createElement('button');b.textContent='Finish';b.onclick=function(ev){ev.stopPropagation();endTalk()};box.appendChild(b)}}
+  function go(k){node=script[k];li=0;typeLine(node.t[0])}
+  function startTalk(){if(talking)return;talking=true;if(guide.position.lengthSq()===0)place();
+    $('card').classList.add('hidden');$('dialog').classList.remove('hidden');go('start')}
+  function endTalk(){talking=false;clearInterval(tmr);typing=false;$('dialog').classList.add('hidden');$('card').classList.remove('hidden');
+    $('story-text').textContent='Nice. Walk around and tap V again whenever you want another chat.';$('story-button').textContent='Talk to V again'}
+  $('dialog').addEventListener('click',function(){
+    if(typing){finishType();return}
+    if(node&&li<node.t.length-1){li++;typeLine(node.t[li])}
+  });
+  $('story-button').addEventListener('click',startTalk);
+  $('place').addEventListener('click',function(){place();say('V is now standing where you are looking.',2500)});
+
+  // ---------- Camera, sensors, location ----------
   async function startCamera(){
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){say('Camera is not available here. Showing the 3D guide on a plain background.');return}
-    try{
-      stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
-      video.srcObject=stream;await video.play().catch(function(){});
-    }catch(e){say('Camera permission was blocked or unavailable. Showing the 3D guide on a plain background.',7000)}
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){say('Camera is not available here. Showing V on a plain background. Drag to look around.');return}
+    try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});video.srcObject=stream;await video.play().catch(function(){})}
+    catch(e){say('Camera was blocked or unavailable. Showing V on a plain background. Drag to look around.',7000)}
   }
   function stopCamera(){if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null}video.srcObject=null}
-
-  // ---------- Location ----------
-  function dist(a,b,c,d){var R=6371000,r=Math.PI/180,dp=(c-a)*r,dl=(d-b)*r;
-    var x=Math.sin(dp/2)*Math.sin(dp/2)+Math.cos(a*r)*Math.cos(c*r)*Math.sin(dl/2)*Math.sin(dl/2);return 2*R*Math.asin(Math.sqrt(x))}
+  async function askMotion(){
+    try{if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){var r=await DeviceOrientationEvent.requestPermission();if(r!=='granted')say('Motion access denied. Drag the screen to look around instead.',6000)}}catch(e){}
+  }
+  function dist(a,b,c,d){var Rr=6371000,r=Math.PI/180,dp=(c-a)*r,dg=(d-b)*r;var x=Math.sin(dp/2)*Math.sin(dp/2)+Math.cos(a*r)*Math.cos(c*r)*Math.sin(dg/2)*Math.sin(dg/2);return 2*Rr*Math.asin(Math.sqrt(x))}
   function checkLocation(){
     var el=$('location-status');
     if(!navigator.geolocation){el.textContent='Location unavailable · demo mode';return}
-    navigator.geolocation.getCurrentPosition(function(p){
-      var d=dist(p.coords.latitude,p.coords.longitude,UST.lat,UST.lng);
-      el.textContent=d<=UST.radius?'📍 You are on campus':'📍 Outside campus · demo mode ('+(d/1000).toFixed(1)+' km away)';
-    },function(){el.textContent='Location off · demo mode'},{timeout:8000,maximumAge:60000});
+    navigator.geolocation.getCurrentPosition(function(p){var d=dist(p.coords.latitude,p.coords.longitude,UST.lat,UST.lng);
+      el.textContent=d<=UST.radius?'📍 You are on campus':'📍 Outside campus · demo mode ('+(d/1000).toFixed(1)+' km away)'},
+      function(){el.textContent='Location off · demo mode'},{timeout:8000,maximumAge:60000});
   }
 
-  // ---------- UI ----------
   $('start').addEventListener('click',async function(){
     $('intro').classList.add('hidden');$('hud').classList.remove('hidden');
-    running=true;resize();checkLocation();await startCamera();
-  });
-  $('story-button').addEventListener('click',function(){
-    $('story-text').textContent=stories[si%stories.length];si++;
-    $('story-button').textContent='Next story';
+    await askMotion();running=true;resize();updateCam();place();checkLocation();await startCamera();
+    setTimeout(function(){say(ori.has?'Move your phone to look around. V is standing in front of you.':'Drag the screen to look around. V is standing in front of you.',4500)},400);
   });
   $('exit').addEventListener('click',function(){
-    running=false;stopCamera();$('hud').classList.add('hidden');$('intro').classList.remove('hidden');
+    running=false;talking=false;clearInterval(tmr);stopCamera();
+    $('dialog').classList.add('hidden');$('card').classList.remove('hidden');$('hud').classList.add('hidden');$('intro').classList.remove('hidden');
     $('story-button').textContent='Discover a story';
   });
 })();
