@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#171717" />
+<meta name="description" content="A camera-based campus storytelling prototype by UST Inkblots." />
+<title>Inkblots — Campus Stories</title>
+<style>
+:root{--bg:#171717;--fg:#f4f1ea;--gold:#f2b705;--red:#c8102e;--mut:#b9b4a8;box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171717;--fg:#f4f1ea}}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--bg);color:var(--fg);font-family:Georgia,"Times New Roman",serif;overflow:hidden}
+#app{position:relative;height:100%;width:100%;overflow:hidden;background:radial-gradient(circle at 30% 20%,#2b2b2b,#111)}
+#camera{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#three-root{position:absolute;inset:0;touch-action:none}
+#three-root canvas{display:block;width:100%;height:100%}
+.shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.1) 35%,rgba(0,0,0,.75))}
+.topbar{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 10px;z-index:5;font-family:system-ui,sans-serif;font-size:11px;letter-spacing:.12em}
+.brand{color:var(--fg);text-decoration:none;font-weight:800;font-size:14px}.brand span{color:var(--gold)}
+.edition{color:var(--mut);text-align:right}
+.intro{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:flex-end;gap:16px;padding:24px 22px calc(28px + env(safe-area-inset-bottom,0px));max-width:620px}
+.eyebrow{font-family:system-ui,sans-serif;font-size:11px;letter-spacing:.18em;color:var(--gold);font-weight:700}
+h1{font-size:clamp(40px,12vw,72px);line-height:1;font-weight:700}h1 em{color:var(--gold)}
+.dek{font-size:17px;line-height:1.5;color:#e6e1d6}
+button{font-family:system-ui,sans-serif;cursor:pointer;border:0;border-radius:999px;font-weight:700;font-size:15px;padding:15px 24px}
+#start{background:var(--gold);color:#171717;align-self:flex-start}
+.secondary{background:var(--fg);color:#171717;margin-top:12px}
+.exit{background:rgba(255,255,255,.14);color:var(--fg);align-self:center;backdrop-filter:blur(8px);font-size:13px;padding:10px 18px}
+.privacy{font-family:system-ui,sans-serif;font-size:12px;color:var(--mut);line-height:1.5}
+.hud{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:space-between;align-items:stretch;padding:calc(58px + env(safe-area-inset-top,0px)) 16px calc(18px + env(safe-area-inset-bottom,0px));pointer-events:none}
+.hud>*{pointer-events:auto}
+.pill{align-self:flex-start;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:8px 14px;font-family:system-ui,sans-serif;font-size:12px;backdrop-filter:blur(8px)}
+.story-card{background:rgba(23,23,23,.82);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:18px;backdrop-filter:blur(12px);max-width:520px;width:100%;align-self:center;margin-bottom:12px}
+.story-card h2{font-size:26px;margin:6px 0}.story-card p:not(.eyebrow){font-size:15px;line-height:1.5;color:#e6e1d6}
+.hidden{display:none!important}
+.notice{position:absolute;left:16px;right:16px;top:calc(56px + env(safe-area-inset-top,0px));z-index:6;background:var(--red);color:#fff;border-radius:12px;padding:12px 14px;font-family:system-ui,sans-serif;font-size:13px;line-height:1.4}
+</style>
+</head>
+<body>
+<div id="app">
+  <video id="camera" autoplay muted playsinline></video>
+  <div id="three-root"></div>
+  <div class="shade"></div>
+  <header class="topbar"><a class="brand" href="#">UST <span>INKBLOTS</span></a><span class="edition">CAMPUS STORIES · AR EXPERIMENT</span></header>
+  <main class="intro" id="intro">
+    <p class="eyebrow">A STORY IS WAITING OUT THERE</p>
+    <h1>Look closer.<br><em>Meet the story.</em></h1>
+    <p class="dek">Find the V staffer waving hello somewhere around the UST campus, then explore a story layered over the world around you.</p>
+    <button id="start">Enter the experience <span aria-hidden="true">↗</span></button>
+    <p class="privacy">Your camera is used on this device for the visual experience. This prototype does not upload or record camera footage.</p>
+  </main>
+  <section class="hud hidden" id="hud" aria-live="polite">
+    <div class="pill" id="location-status">Checking campus location…</div>
+    <div class="story-card"><p class="eyebrow">YOUR CAMPUS COMPANION</p><h2>Hey, Thomasian!</h2><p id="story-text">I'm a 3D V staffer, here to guide you to stories hiding in plain sight.</p><button id="story-button" class="secondary">Discover a story</button></div>
+    <button id="exit" class="exit">Exit camera</button>
+  </section>
+  <div class="notice hidden" id="notice" role="status"></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var video=$('camera'),root=$('three-root'),notice=$('notice'),stream=null,running=false;
+  // Sample prompts only. Replace with real Inkblots stories.
+  var stories=[
+    "Story 1 (sample): Every campus corner has someone who has been here longer than the paint. Ask them what it looked like before.",
+    "Story 2 (sample): Look up. The oldest buildings keep their own records in stone, glass and weather stains.",
+    "Story 3 (sample): The best lead is usually the one you walk past daily. Pick one place and ask three questions."
+  ],si=0;
+  var UST={lat:14.6097,lng:120.9890,radius:700};
+
+  function say(msg,ms){notice.textContent=msg;notice.classList.remove('hidden');clearTimeout(say.t);say.t=setTimeout(function(){notice.classList.add('hidden')},ms||5000)}
+
+  // ---------- Three.js scene ----------
+  var renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  root.appendChild(renderer.domElement);
+  var scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(45,1,.1,50);
+  cam.position.set(0,1.1,5.2);cam.lookAt(0,1,0);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x444444,1.0));
+  var dl=new THREE.DirectionalLight(0xffffff,.9);dl.position.set(2,4,3);scene.add(dl);
+
+  var M=function(c){return new THREE.MeshStandardMaterial({color:c,roughness:.6})};
+  var guide=new THREE.Group();
+  var body=new THREE.Mesh(new THREE.CylinderGeometry(.5,.62,1.2,24),M(0x171717));body.position.y=.7;guide.add(body);
+  var head=new THREE.Mesh(new THREE.SphereGeometry(.42,28,24),M(0xf1c9a5));head.position.y=1.65;guide.add(head);
+  var hair=new THREE.Mesh(new THREE.SphereGeometry(.44,28,24,0,Math.PI*2,0,Math.PI/2),M(0x1a1209));hair.position.y=1.7;guide.add(hair);
+  [-.15,.15].forEach(function(x){var e=new THREE.Mesh(new THREE.SphereGeometry(.05,12,12),M(0x111111));e.position.set(x,1.68,.37);guide.add(e)});
+  var smile=new THREE.Mesh(new THREE.TorusGeometry(.12,.02,8,16,Math.PI),M(0x7a2d2d));smile.position.set(0,1.54,.39);smile.rotation.z=Math.PI;guide.add(smile);
+  // red V badge on chest
+  var vs=new THREE.Shape();vs.moveTo(-.28,.3);vs.lineTo(-.14,.3);vs.lineTo(0,-.08);vs.lineTo(.14,.3);vs.lineTo(.28,.3);vs.lineTo(.07,-.3);vs.lineTo(-.07,-.3);vs.closePath();
+  var vm=new THREE.Mesh(new THREE.ExtrudeGeometry(vs,{depth:.04,bevelEnabled:false}),M(0xc8102e));vm.position.set(0,.85,.57);vm.scale.set(.9,.9,1);guide.add(vm);
+  // arms: left rests, right waves
+  function arm(side){var g=new THREE.Group(),m=new THREE.Mesh(new THREE.CylinderGeometry(.11,.11,.8,14),M(0x171717));m.position.y=-.35;g.add(m);
+    var h=new THREE.Mesh(new THREE.SphereGeometry(.13,14,14),M(0xf1c9a5));h.position.y=-.78;g.add(h);g.position.set(side*.62,1.15,0);return g}
+  var armL=arm(-1),armR=arm(1);armL.rotation.z=.15;guide.add(armL,armR);
+  // ground ring
+  var ring=new THREE.Mesh(new THREE.RingGeometry(.9,1,48),new THREE.MeshBasicMaterial({color:0xf2b705,side:THREE.DoubleSide,transparent:true,opacity:.8}));
+  ring.rotation.x=-Math.PI/2;ring.position.y=.02;guide.add(ring);
+  guide.position.y=-.2;scene.add(guide);
+
+  function resize(){var w=root.clientWidth||innerWidth,h=root.clientHeight||innerHeight;renderer.setSize(w,h);cam.aspect=w/h;cam.position.z=w/h<.8?6.4:5.2;cam.updateProjectionMatrix()}
+  addEventListener('resize',resize);resize();
+
+  // drag to rotate
+  var drag=false,lx=0,spin=0;
+  root.addEventListener('pointerdown',function(e){drag=true;lx=e.clientX});
+  addEventListener('pointerup',function(){drag=false});
+  addEventListener('pointermove',function(e){if(drag){spin+=(e.clientX-lx)*.01;lx=e.clientX}});
+
+  var t0=performance.now();
+  (function loop(){requestAnimationFrame(loop);if(!running)return;
+    var t=(performance.now()-t0)/1000;
+    armR.rotation.z=-2.4+Math.sin(t*6)*.35;
+    guide.position.y=-.2+Math.sin(t*2)*.04;
+    guide.rotation.y=spin+Math.sin(t*.8)*.25;
+    ring.rotation.z=t;
+    renderer.render(scene,cam)})();
+
+  // ---------- Camera ----------
+  async function startCamera(){
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){say('Camera is not available here. Showing the 3D guide on a plain background.');return}
+    try{
+      stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+      video.srcObject=stream;await video.play().catch(function(){});
+    }catch(e){say('Camera permission was blocked or unavailable. Showing the 3D guide on a plain background.',7000)}
+  }
+  function stopCamera(){if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null}video.srcObject=null}
+
+  // ---------- Location ----------
+  function dist(a,b,c,d){var R=6371000,r=Math.PI/180,dp=(c-a)*r,dl=(d-b)*r;
+    var x=Math.sin(dp/2)*Math.sin(dp/2)+Math.cos(a*r)*Math.cos(c*r)*Math.sin(dl/2)*Math.sin(dl/2);return 2*R*Math.asin(Math.sqrt(x))}
+  function checkLocation(){
+    var el=$('location-status');
+    if(!navigator.geolocation){el.textContent='Location unavailable · demo mode';return}
+    navigator.geolocation.getCurrentPosition(function(p){
+      var d=dist(p.coords.latitude,p.coords.longitude,UST.lat,UST.lng);
+      el.textContent=d<=UST.radius?'📍 You are on campus':'📍 Outside campus · demo mode ('+(d/1000).toFixed(1)+' km away)';
+    },function(){el.textContent='Location off · demo mode'},{timeout:8000,maximumAge:60000});
+  }
+
+  // ---------- UI ----------
+  $('start').addEventListener('click',async function(){
+    $('intro').classList.add('hidden');$('hud').classList.remove('hidden');
+    running=true;resize();checkLocation();await startCamera();
+  });
+  $('story-button').addEventListener('click',function(){
+    $('story-text').textContent=stories[si%stories.length];si++;
+    $('story-button').textContent='Next story';
+  });
+  $('exit').addEventListener('click',function(){
+    running=false;stopCamera();$('hud').classList.add('hidden');$('intro').classList.remove('hidden');
+    $('story-button').textContent='Discover a story';
+  });
+})();
+</script>
+</body>
+</html>
