@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#171717" />
+    <meta name="description" content="A camera-based campus storytelling prototype by UST Inkblots." />
+    <title>Inkblots — Campus Stories</title>
+  </head>
+  <body>
+    <div id="app">
+      <video id="camera" autoplay muted playsinline></video>
+      <div id="three-root"></div>
+      <div class="shade"></div>
+      <header class="topbar"><a class="brand" href="#">UST <span>INKBLOTS</span></a><span class="edition">CAMPUS STORIES · AR EXPERIMENT</span></header>
+      <main class="intro" id="intro">
+        <p class="eyebrow">A STORY IS WAITING OUT THERE</p>
+        <h1>Look closer.<br><em>Meet the story.</em></h1>
+        <p class="dek">Find the V staffer waving hello somewhere around the UST campus, then explore a story layered over the world around you.</p>
+        <button id="start">Enter the experience <span aria-hidden="true">↗</span></button>
+        <p class="privacy">Your camera is used on this device for the visual experience. This prototype does not upload or record camera footage.</p>
+      </main>
+      <section class="hud hidden" id="hud" aria-live="polite">
+        <div class="pill" id="location-status">Checking campus location…</div>
+        <div class="story-card"><p class="eyebrow">YOUR CAMPUS COMPANION</p><h2>Hey, Thomasian!</h2><p>I'm a 3D V staffer, here to guide you to stories hiding in plain sight.</p><button id="story-button" class="secondary">Discover a story</button></div>
+        <button id="exit" class="exit">Exit camera</button>
+      </section>
+      <div class="notice hidden" id="notice" role="status"></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
