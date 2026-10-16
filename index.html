@@ -4,8 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#171717" />
-<meta name="description" content="A camera-based campus storytelling prototype by UST Inkblots." />
-<title>Inkblots — Campus Stories</title>
+<meta name="description" content="Lorem ipsum dolor sit amet, consectetur adipiscing elit." />
+<title>Lorem Ipsum Dolor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -57,22 +57,22 @@ button.pill{font-weight:600;cursor:pointer}
   <video id="camera" autoplay muted playsinline></video>
   <div id="three-root"></div>
   <div class="shade"></div>
-  <header class="topbar"><a class="brand" href="#">UST <span>INKBLOTS</span></a><span class="edition">CAMPUS STORIES · AR EXPERIMENT</span></header>
+  <header class="topbar"><a class="brand" href="#">LOREM <span>IPSUM</span></a></header>
   <main class="intro" id="intro">
-    <p class="eyebrow">A STORY IS WAITING OUT THERE</p>
-    <h1>Look closer.<br><em>Meet the story.</em></h1>
-    <p class="dek">Find the V staffer waving hello somewhere around the UST campus, then explore a story layered over the world around you.</p>
+    <p class="eyebrow">LOREM IPSUM DOLOR SIT AMET</p>
+    <h1>Lorem ipsum.<br><em>Dolor sit amet.</em></h1>
+    <p class="dek">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
     <button id="start">Enter the experience <span aria-hidden="true">↗</span></button>
-    <p class="privacy">Your camera is used on this device for the visual experience. This prototype does not upload or record camera footage.</p>
+    <p class="privacy">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
   </main>
   <section class="hud hidden" id="hud" aria-live="polite">
-    <div class="row"><div class="pill" id="location-status">Checking campus location…</div><button class="pill" id="place">Place V here</button></div>
+    <div class="row"><div class="pill" id="location-status">Lorem ipsum dolor…</div><button class="pill" id="place">Lorem ipsum</button></div>
     <div>
-      <div class="story-card" id="card"><p class="eyebrow">YOUR CAMPUS COMPANION</p><h2>Hey, Thomasian!</h2><p id="story-text">Move your phone around to find the V staffer standing in your space. Tap V, or the button below, to start talking.</p><button id="story-button" class="secondary">Discover a story</button></div>
+      <div class="story-card" id="card"><p class="eyebrow">LOREM IPSUM DOLOR</p><h2>Lorem ipsum!</h2><p id="story-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p><button id="story-button" class="secondary">Lorem ipsum dolor</button></div>
     </div>
-    <button id="exit" class="exit">Exit camera</button>
+    <button id="exit" class="exit">Lorem ipsum</button>
   </section>
-  <div class="dialog hidden" id="dialog"><span class="name"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fdb515" d="M2 3h5l5 11 3-6h4l-7 16h-2z"/></svg>TOMAS U. SANTOS</span><p class="line" id="line"></p><div class="choices" id="choices"></div><span class="tap" id="tap">TAP TO CONTINUE ▸</span></div>
+  <div class="dialog hidden" id="dialog"><span class="name"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fdb515" d="M2 3h5l5 11 3-6h4l-7 16h-2z"/></svg>LOREM IPSUM</span><p class="line" id="line"></p><div class="choices" id="choices"></div><span class="tap" id="tap">LOREM IPSUM ▸</span></div>
   <div class="notice hidden" id="notice" role="status"></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -82,13 +82,13 @@ button.pill{font-weight:600;cursor:pointer}
   var video=$('camera'),root=$('three-root'),notice=$('notice'),stream=null,running=false,talking=false;
   var UST={lat:14.6097,lng:120.9890,radius:700};
 
-  // SAMPLE SCRIPT: replace the text with real Inkblots stories. Each node: t = lines, c = [label, nextNode], end = finish.
+  // SAMPLE SCRIPT: placeholder text. Each node: t = lines, c = [label, nextNode], end = finish.
   var script={
-    start:{t:["Psst! Over here. Yes, you, Thomasian.","I'm Tomas U. Santos, but around here everyone calls me V. I've been waiting for someone curious enough to look up from their phone."],c:[["Where's the story?","where"],["Who are you?","who"]]},
-    who:{t:["Think of me as what's left when a newsroom's late nights turn into a mascot.","I carry the questions nobody had time to finish asking."],c:[["Okay, show me a story","where"]]},
-    where:{t:["Stories hide in plain sight. Look around slowly and pick one spot near you: a bench, a wall, a doorway.","Got one? Good. Now think: who passes through here every day, and who never notices?"],c:[["Someone always does","a"],["I'll go ask around","b"]]},
-    a:{t:["Then that's your lead. Start with three questions: who, since when, and what changed.","Real Inkblots stories will unlock right here soon. Come find me again!"],end:1},
-    b:{t:["Good instinct. The best stories begin with a conversation, not a press release.","Real Inkblots stories will unlock right here soon. Come find me again!"],end:1}
+    start:{t:["Lorem ipsum dolor sit amet.","Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."],c:[["Lorem ipsum dolor?","where"],["Sit amet elit?","who"]]},
+    who:{t:["Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.","Duis aute irure dolor in reprehenderit in voluptate velit esse."],c:[["Lorem ipsum dolor sit","where"]]},
+    where:{t:["Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim.","Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor."],c:[["Lorem ipsum dolor","a"],["Sit amet consectetur","b"]]},
+    a:{t:["Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.","Lorem ipsum dolor sit amet, consectetur adipiscing elit!"],end:1},
+    b:{t:["Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.","Lorem ipsum dolor sit amet, consectetur adipiscing elit!"],end:1}
   };
 
   function say(msg,ms){notice.textContent=msg;notice.classList.remove('hidden');clearTimeout(say.t);say.t=setTimeout(function(){notice.classList.add('hidden')},ms||5000)}
@@ -261,47 +261,47 @@ button.pill{font-weight:600;cursor:pointer}
     if(!last){$('tap').classList.remove('hidden');return}
     var box=$('choices');box.innerHTML='';
     if(node.c)node.c.forEach(function(c){var b=document.createElement('button');b.textContent=c[0];b.onclick=function(ev){ev.stopPropagation();go(c[1])};box.appendChild(b)});
-    else{var b=document.createElement('button');b.textContent='Finish';b.onclick=function(ev){ev.stopPropagation();endTalk()};box.appendChild(b)}}
+    else{var b=document.createElement('button');b.textContent='Lorem';b.onclick=function(ev){ev.stopPropagation();endTalk()};box.appendChild(b)}}
   function go(k){node=script[k];li=0;typeLine(node.t[0])}
   function startTalk(){if(talking)return;talking=true;if(guide.position.lengthSq()===0)place();
     $('card').classList.add('hidden');$('dialog').classList.remove('hidden');go('start')}
   function endTalk(){talking=false;clearInterval(tmr);typing=false;$('dialog').classList.add('hidden');$('card').classList.remove('hidden');
-    $('story-text').textContent='Nice. Walk around and tap V again whenever you want another chat.';$('story-button').textContent='Talk to V again'}
+    $('story-text').textContent='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.';$('story-button').textContent='Lorem ipsum again'}
   $('dialog').addEventListener('click',function(){
     if(typing){finishType();return}
     if(node&&li<node.t.length-1){li++;typeLine(node.t[li])}
   });
   $('story-button').addEventListener('click',startTalk);
-  $('place').addEventListener('click',function(){place();say('V is now standing where you are looking.',2500)});
+  $('place').addEventListener('click',function(){place();say('Lorem ipsum dolor sit amet.',2500)});
 
   // ---------- Camera, sensors, location ----------
   async function startCamera(){
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){say('Camera is not available here. Showing V on a plain background. Drag to look around.');return}
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){say('Lorem ipsum dolor sit amet, consectetur adipiscing elit.');return}
     try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});video.srcObject=stream;await video.play().catch(function(){})}
-    catch(e){say('Camera was blocked or unavailable. Showing V on a plain background. Drag to look around.',7000)}
+    catch(e){say('Lorem ipsum dolor sit amet, consectetur adipiscing elit.',7000)}
   }
   function stopCamera(){if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null}video.srcObject=null}
   async function askMotion(){
-    try{if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){var r=await DeviceOrientationEvent.requestPermission();if(r!=='granted')say('Motion access denied. Drag the screen to look around instead.',6000)}}catch(e){}
+    try{if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){var r=await DeviceOrientationEvent.requestPermission();if(r!=='granted')say('Lorem ipsum dolor sit amet, consectetur adipiscing elit.',6000)}}catch(e){}
   }
   function dist(a,b,c,d){var Rr=6371000,r=Math.PI/180,dp=(c-a)*r,dg=(d-b)*r;var x=Math.sin(dp/2)*Math.sin(dp/2)+Math.cos(a*r)*Math.cos(c*r)*Math.sin(dg/2)*Math.sin(dg/2);return 2*Rr*Math.asin(Math.sqrt(x))}
   function checkLocation(){
     var el=$('location-status');
-    if(!navigator.geolocation){el.textContent='Location unavailable · demo mode';return}
+    if(!navigator.geolocation){el.textContent='Lorem ipsum dolor';return}
     navigator.geolocation.getCurrentPosition(function(p){var d=dist(p.coords.latitude,p.coords.longitude,UST.lat,UST.lng);
-      el.textContent=d<=UST.radius?'📍 You are on campus':'📍 Outside campus · demo mode ('+(d/1000).toFixed(1)+' km away)'},
-      function(){el.textContent='Location off · demo mode'},{timeout:8000,maximumAge:60000});
+      el.textContent=d<=UST.radius?'📍 Lorem ipsum dolor':'📍 Lorem ipsum dolor ('+(d/1000).toFixed(1)+' km)'},
+      function(){el.textContent='Lorem ipsum dolor'},{timeout:8000,maximumAge:60000});
   }
 
   $('start').addEventListener('click',async function(){
     $('intro').classList.add('hidden');$('hud').classList.remove('hidden');
     await askMotion();running=true;resize();updateCam();place();checkLocation();await startCamera();
-    setTimeout(function(){say(ori.has?'Move your phone to look around. V is standing in front of you.':'Drag the screen to look around. V is standing in front of you.',4500)},400);
+    setTimeout(function(){say('Lorem ipsum dolor sit amet, consectetur adipiscing elit.',4500)},400);
   });
   $('exit').addEventListener('click',function(){
     running=false;talking=false;clearInterval(tmr);stopCamera();
     $('dialog').classList.add('hidden');$('card').classList.remove('hidden');$('hud').classList.add('hidden');$('intro').classList.remove('hidden');
-    $('story-button').textContent='Discover a story';
+    $('story-button').textContent='Lorem ipsum dolor';
   });
 })();
 </script>
